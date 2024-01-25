@@ -20,9 +20,9 @@ module ReversiMethods
 
   def output(board)
     puts "  #{Position::ROW.join(' ')}"
-    board.each_with_index do |col, i|
+    board.each_with_index do |row, i|
       print Position::COL[i]
-      col.each do |cell|
+      row.each do |cell|
         case cell
         when WHITE_STONE then print ' ○'
         when BLACK_STONE then print ' ●'
@@ -34,9 +34,9 @@ module ReversiMethods
   end
 
   def copy_board(to_board, from_board)
-    from_board.each_with_index do |cols, row|
-      cols.each_with_index do |cell, col|
-        to_board[row][col] = cell
+    from_board.each_with_index do |rows, col|
+      rows.each_with_index do |cell, row|
+        to_board[col][row] = cell
       end
     end
   end
@@ -79,8 +79,8 @@ module ReversiMethods
   end
 
   def placeable?(board, attack_stone_color)
-    board.each_with_index do |rows, row|
-      rows.each_with_index do |cell, col|
+    board.each_with_index do |rows, col|
+      rows.each_with_index do |cell, row|
         next unless cell == BLANK_CELL
 
         position = Position.new(row, col)
