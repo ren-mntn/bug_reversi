@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './position'
+require 'debug'
 
 module ReversiMethods
   WHITE_STONE = 'W'
@@ -18,10 +19,10 @@ module ReversiMethods
   end
 
   def output(board)
-    puts "  #{Position::COL.join(' ')}"
-    board.each_with_index do |row, i|
-      print Position::ROW[i]
-      row.each do |cell|
+    puts "  #{Position::ROW.join(' ')}"
+    board.each_with_index do |col, i|
+      print Position::COL[i]
+      col.each do |cell|
         case cell
         when WHITE_STONE then print ' ○'
         when BLACK_STONE then print ' ●'
@@ -78,8 +79,8 @@ module ReversiMethods
   end
 
   def placeable?(board, attack_stone_color)
-    board.each_with_index do |cols, row|
-      cols.each_with_index do |cell, col|
+    board.each_with_index do |rows, row|
+      rows.each_with_index do |cell, col|
         next unless cell == BLANK_CELL
 
         position = Position.new(row, col)
