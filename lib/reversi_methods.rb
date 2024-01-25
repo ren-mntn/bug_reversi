@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './position'
+require 'debug'
 
 module ReversiMethods
   WHITE_STONE = 'W'
@@ -18,9 +19,9 @@ module ReversiMethods
   end
 
   def output(board)
-    puts "  #{Position::COL.join(' ')}"
+    puts "  #{Position::ROW.join(' ')}"
     board.each_with_index do |row, i|
-      print Position::ROW[i]
+      print Position::COL[i]
       row.each do |cell|
         case cell
         when WHITE_STONE then print ' ○'
@@ -33,9 +34,9 @@ module ReversiMethods
   end
 
   def copy_board(to_board, from_board)
-    from_board.each_with_index do |cols, row|
-      cols.each_with_index do |cell, col|
-        to_board[row][col] = cell
+    from_board.each_with_index do |rows, col|
+      rows.each_with_index do |cell, row|
+        to_board[col][row] = cell
       end
     end
   end
@@ -62,11 +63,13 @@ module ReversiMethods
 
   def turn(board, target_pos, attack_stone_color, direction)
     return false if target_pos.out_of_board?
-    return false if target_pos.stone_color(board) == attack_stone_color
+    
+    target_color = target_pos.stone_color(board)
+    return false if target_color == attack_stone_color || target_color == BLANK_CELL
 
     next_pos = target_pos.next_position(direction)
     if (next_pos.stone_color(board) == attack_stone_color) || turn(board, next_pos, attack_stone_color, direction)
-      board[target_pos.row][target_pos.col] = attack_stone_color
+      board[target_pos.col][target_pos.row] = attack_stone_color
       true
     else
       false
@@ -78,14 +81,15 @@ module ReversiMethods
   end
 
   def placeable?(board, attack_stone_color)
-    board.each_with_index do |cols, row|
-      cols.each_with_index do |cell, col|
+    board.each_with_index do |rows, col|
+      rows.each_with_index do |cell, row|
         next unless cell == BLANK_CELL
 
         position = Position.new(row, col)
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
       end
     end
+    return false
   end
 
   def count_stone(board, stone_color)
